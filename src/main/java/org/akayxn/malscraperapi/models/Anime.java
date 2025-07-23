@@ -16,6 +16,8 @@ public class Anime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(unique = true)
+    private int malId;
     private int rank;
     private String title;
     private double score;

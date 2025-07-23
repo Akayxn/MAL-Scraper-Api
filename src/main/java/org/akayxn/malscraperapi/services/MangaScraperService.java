@@ -1,10 +1,12 @@
 package org.akayxn.malscraperapi.services;
 
 import org.akayxn.malscraperapi.models.Manga;
+import org.akayxn.malscraperapi.repositories.MangaRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -12,27 +14,37 @@ import java.io.IOException;
 import java.util.Set;
 
 @Service
-public class MangaScraperService implements ScraperService<Manga> {
+public class MangaScraperService implements ScraperService {
+    @Autowired
+    public MangaRepository mangaRepository;
+
+
+    @Value("${manga.source.url}")
+    String url;
+
 
     @Override
-    public Set<Manga> scrape() {
+    public void scrape() {
         try{
 //            Connects to the website, and get the html document
             Document document = Jsoup.connect(url).get();
 
 //            finding all the needed elements
             Elements mangaRows = document.select("tr.ranking-list");
-
+            var idIterator = document.select("[id^=area]")
+                    .stream()
+                    .map(Element::id)
+                    .filter(id -> id.length() > 4)
+                    .map(id -> id.substring(4))
+                    .filter(suffix -> suffix.matches("\\d+"))
+                    .map(Integer::valueOf).iterator();  // now we're mapping to Integer, not int
             for(Element element : mangaRows){
                 Manga manga = new Manga();
 
-//              Id
-                Element idAnchor = element.selectFirst("td.title.al a");
-                String id = idAnchor.id();
-                if(id != null){
-                    System.out.println(id);
-                    manga.setTitle(id.text());
-                }
+//              MalId
+                int malId = idIterator.next();
+                System.out.println(malId);
+                manga.setMalId(malId);
 
 
 //                Ranks
@@ -56,8 +68,7 @@ public class MangaScraperService implements ScraperService<Manga> {
                     manga.setScore(Double.parseDouble(scoreSpan.text()));
                 }
 
-
-
+                mangaRepository.save(manga);
             }
 
         } catch (IOException e) {
@@ -65,9 +76,6 @@ public class MangaScraperService implements ScraperService<Manga> {
         }
 
     }
-
-    @Value("${manga.source.url}")
-    String url;
 
 
 

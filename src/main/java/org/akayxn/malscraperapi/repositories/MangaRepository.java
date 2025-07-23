@@ -12,5 +12,4 @@ public interface MangaRepository extends JpaRepository<Manga, Integer> {
     Manga findByTitle(String title);
     List<Manga> findByScoreGreaterThanEqual(double score);
     List<Manga> findAllByOrderByRankAsc();
-
 }
