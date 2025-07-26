@@ -9,10 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MalScraperAPiApplication {
 
     public static void main(String[] args) {
-        var context=SpringApplication.run(MalScraperAPiApplication.class, args);
-
-        var scraperService = context.getBean(AnimeScraperService.class);
-        scraperService.scrape();
+SpringApplication.run(MalScraperAPiApplication.class, args);
 
 
     }
