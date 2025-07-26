@@ -13,4 +13,5 @@ public interface AnimeRepository extends JpaRepository<Anime, Integer> {
     List<Anime> findByScoreGreaterThanEqual(double score);
     List<Anime> findAllByOrderByRankAsc();
 
+    Anime findByMalId(int malId);
 }

@@ -59,7 +59,7 @@ public class AnimeScraperService implements ScraperService{
                     }
 
 //                Title
-                    Element titleHeading = element.selectFirst("td.title.al div.detail h3.manga_h3 a");
+                    Element titleHeading = element.selectFirst("td.title.al div.detail h3.fl-l a");
                     if(titleHeading != null){
                         System.out.println(titleHeading);
                         anime.setTitle(titleHeading.text());
@@ -72,7 +72,10 @@ public class AnimeScraperService implements ScraperService{
                         anime.setScore(Double.parseDouble(scoreSpan.text()));
                     }
 
-                    animeRepository.save(anime);
+
+                    upsertAnime(anime);
+
+
                 }
 
             } catch (IOException e) {
@@ -80,6 +83,27 @@ public class AnimeScraperService implements ScraperService{
             }
 
         }
+
+    public Anime upsertAnime(Anime newAnime) {
+        // Try to find existing Anime by malId
+        Anime existingAnime = animeRepository.findByMalId(newAnime.getMalId());
+
+        if (existingAnime != null) {
+            // Update existing Anime fields
+            existingAnime.setTitle(newAnime.getTitle());
+            existingAnime.setRank(newAnime.getRank());
+            existingAnime.setScore(newAnime.getScore());
+
+            return animeRepository.save(existingAnime);
+        } else {
+            animeRepository.save(newAnime);
+        }
+        return null;
+    }
+
+
+
+
 }
 
 

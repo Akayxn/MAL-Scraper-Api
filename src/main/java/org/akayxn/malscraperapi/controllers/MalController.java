@@ -19,11 +19,16 @@ public class MalController {
         this.animeRepository = animeRepository;
     }
 
-    @GetMapping("/topManga")
-    public List<Manga> listAnime(){
-        return mangaRepository.findAll();
+    @GetMapping("/topAnime")
+    public List<Anime> listAnime(){
+        return animeRepository.findAll();
     }
 
+
+    @GetMapping("/topManga")
+    public List<Manga> listManga(){
+        return mangaRepository.findAll();
+    }
 
 
 
